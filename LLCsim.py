@@ -254,23 +254,19 @@ def model5Cars(space, step, v, rel_v, rel_acc, index, laneBound):
 
     currPos = (traci.vehicle.getPosition("%d" % index))[1]
     currSpeed = traci.vehicle.getSpeed("%d" % index)
-    #inRange = []
     kvals = [.05,.05, .1, .3, .5]
     alphas = [0,0,0,0,0]
-    relPos = []
-    relVel = []
+    relPos = [0,0,0,0,0]
+    relVel = [0,0,0,0,0]
     if (index >= 5) :
         for i in range(5):
             j = index - 5 + i
-            #if (abs(position[step, index - i] - currPos) < 200):
-               # inRange.append(i)
             if (abs((traci.vehicle.getPosition("%d" % j)[1]) - currPos) < 300):
-                #inRange.append(i)
                 alphas[i] = 1
             relPos[i] = traci.vehicle.getPosition("%d" % (index - 5 + i + laneBound))[1] - currPos
             relVel[i] = traci.vehicle.getSpeed("%d" % (index - 5 + i + laneBound)) - currSpeed
 
-     else :
+    else:
         for i in range(index):
             if (abs((traci.vehicle.getPosition("%d" % i)[1]) - currPos) < 300):
                 alphas[i+(5-index)] = 1
@@ -286,10 +282,10 @@ def model5Cars(space, step, v, rel_v, rel_acc, index, laneBound):
 
     for i in range (5):
         tempArr[i] *= multFactor
-    sum = 0;
+    tot = 0
     for i in range(5):
-        sum += tempArr[i]*relPos[i] + tempArr[i]*relVel[i]
-    return sum
+        tot += tempArr[i]*relPos[i] + tempArr[i]*relVel[i]
+    return tot
 
 
 
@@ -469,7 +465,8 @@ while step<=max_iter:
                         #acceleration = modelA(space, step, v, rel_v, rel_acc, i, laneBound)
                         #acceleration = sim_setting3(position[step,i], space, v, rel_v, 0.6, i, step, 0)
                         # acceleration = model1Car(space, step, v, rel_v, rel_acc, i, 0)
-                        acceleration = model3Cars(space, step, v, rel_v, rel_acc, i, 0)
+                        #acceleration = model3Cars(space, step, v, rel_v, rel_acc, i, 0)
+                        acceleration = model5Cars(space, step, v, rel_v, rel_acc, i, 0)
                         #acceleration = acc_linear(h, v, space, rel_v, rel_acc, ks, kv, ka)
                     elif i > N_lane_1 and i < N_lane_1 + N_lane_2:
                         position[step,i] = traci.vehicle.getPosition(str(i))[1]
@@ -487,7 +484,8 @@ while step<=max_iter:
                         #acceleration = modelA(space, step, v, rel_v, rel_acc, i, laneBound)
                         #acceleration = sim_setting3(position[step,i], space, v, rel_v, 0.6, i, step, N_lane_1)
                         # acceleration = model1Car(space, step, v, rel_v, rel_acc, i, 0)
-                        acceleration = model3Cars(space, step, v, rel_v, rel_acc, i, 0)
+                        # acceleration = model3Cars(space, step, v, rel_v, rel_acc, i, 0)
+                        acceleration = model5Cars(space, step, v, rel_v, rel_acc, i, 0)
                         #acceleration = acc_linear(h, v, space, rel_v, rel_acc, ks, kv, ka)
                     else:
                         position[step,i] = traci.vehicle.getPosition(str(i))[1]
@@ -505,7 +503,8 @@ while step<=max_iter:
                         #acceleration = modelA(space, step, v, rel_v, rel_acc, i, laneBound)
                         #acceleration = sim_setting3(position[step,i], space, v, rel_v, 0.6, i, step, N_lane_1 + N_lane_2)
                         # acceleration = model1Car(space, step, v, rel_v, rel_acc, i, 0)
-                        acceleration = model3Cars(space, step, v, rel_v, rel_acc, i, 0)
+                        # acceleration = model3Cars(space, step, v, rel_v, rel_acc, i, 0)
+                        acceleration = model5Cars(space, step, v, rel_v, rel_acc, i, 0)
                         #acceleration = acc_linear(h, v, space, rel_v, rel_acc, ks, kv, ka)
                     new_spd = speed[step,i] + acceleration*dt
                     traci.vehicle.setSpeed("%d" % i, speed[step,i] + acceleration*dt)
